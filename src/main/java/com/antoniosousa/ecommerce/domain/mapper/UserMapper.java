@@ -5,6 +5,9 @@ import com.antoniosousa.ecommerce.domain.dtos.user.UserRegisterResponseDto;
 import com.antoniosousa.ecommerce.domain.entities.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -14,4 +17,6 @@ public interface UserMapper {
     UserRegisterResponseDto toUserRegisterResponseDto(User user);
 
     User toEntity(UserRegisterRequestDto userRegisterRequestDto);
+
+    List<UserRegisterResponseDto> toResponseDtos(List<User> users);
 }
