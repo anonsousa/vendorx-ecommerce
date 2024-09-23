@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -15,4 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("UPDATE User u SET u.integrated = :integrated WHERE u.id = :id")
     void updateIntegratedById(@Param("id") Long id, @Param("integrated") boolean integrated);
+
+    @Transactional(readOnly = true)
+    List<User> findByIntegratedFalse();
 }
