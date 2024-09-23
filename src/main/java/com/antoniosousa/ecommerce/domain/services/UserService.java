@@ -3,6 +3,7 @@ package com.antoniosousa.ecommerce.domain.services;
 import com.antoniosousa.ecommerce.domain.dtos.user.UserRegisterRequestDto;
 import com.antoniosousa.ecommerce.domain.dtos.user.UserRegisterResponseDto;
 import com.antoniosousa.ecommerce.domain.entities.User;
+import com.antoniosousa.ecommerce.domain.entities.VerificationToken;
 import com.antoniosousa.ecommerce.domain.entities.enums.AccountStatus;
 import com.antoniosousa.ecommerce.domain.mapper.UserMapper;
 import com.antoniosousa.ecommerce.domain.repositories.UserRepository;
@@ -18,13 +19,15 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final NotificationRabbitMQService notificationRabbitMQService;
+    private final VerificationTokenService verificationTokenService;
     private final String exchange;
 
     public UserService(UserRepository userRepository,
-                       NotificationRabbitMQService notificationRabbitMQService,
+                       NotificationRabbitMQService notificationRabbitMQService, VerificationTokenService verificationTokenService,
                        @Value("${rabbitmq.notification.exchange}") String exchange) {
         this.userRepository = userRepository;
         this.notificationRabbitMQService = notificationRabbitMQService;
+        this.verificationTokenService = verificationTokenService;
         this.exchange = exchange;
     }
 
@@ -32,13 +35,13 @@ public class UserService {
     public UserRegisterResponseDto registerUser(UserRegisterRequestDto user) {
         User userEntity = UserMapper.INSTANCE.toEntity(user);
         userEntity.setAccountStatus(AccountStatus.PENDING);
-
         var userSaved = userRepository.save(userEntity);
 
-        UserRegisterResponseDto response = UserMapper.INSTANCE.toUserRegisterResponseDto(userSaved);
-        notifyRabbit(response);
+        VerificationToken verificationToken = verificationTokenService.createVerificationToken(userSaved);
 
-        return response;
+        notifyRabbit(verificationToken);
+
+        return UserMapper.INSTANCE.toUserRegisterResponseDto(userSaved);
     }
 
     @Transactional(readOnly = true)
@@ -62,13 +65,12 @@ public class UserService {
         userRepository.delete(user);
     }
 
-
-    private void notifyRabbit(UserRegisterResponseDto user) {
+    private void notifyRabbit(VerificationToken verificationTokenService) {
         try {
-            notificationRabbitMQService.notify(user, exchange);
-            userRepository.updateIntegratedById(user.getId(), true);
+            notificationRabbitMQService.notify(verificationTokenService, exchange);
+            userRepository.updateIntegratedById(verificationTokenService.getUser().getId(), true);
         } catch (RuntimeException e) {
-            userRepository.updateIntegratedById(user.getId(), false);
+            userRepository.updateIntegratedById(verificationTokenService.getUser().getId(), false);
         }
     }
 
