@@ -1,8 +1,10 @@
 package com.antoniosousa.ecommerce.domain.scheduler;
 
 import com.antoniosousa.ecommerce.domain.dtos.user.UserRegisterResponseDto;
+import com.antoniosousa.ecommerce.domain.entities.VerificationToken;
 import com.antoniosousa.ecommerce.domain.mapper.UserMapper;
 import com.antoniosousa.ecommerce.domain.repositories.UserRepository;
+import com.antoniosousa.ecommerce.domain.repositories.VerificationTokenRepository;
 import com.antoniosousa.ecommerce.domain.services.NotificationRabbitMQService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,16 +23,18 @@ public class UsersWithoutIntegration {
 
     private final UserRepository userRepository;
     private final NotificationRabbitMQService notificationRabbitMQService;
+    private final VerificationTokenRepository verificationTokenRepository;
     private final String exchange;
 
     private static final Logger logger = LoggerFactory.getLogger(UsersWithoutIntegration.class);
 
 
     public UsersWithoutIntegration(UserRepository userRepository,
-                                   NotificationRabbitMQService notificationRabbitMQService,
+                                   NotificationRabbitMQService notificationRabbitMQService, VerificationTokenRepository verificationTokenRepository,
                                    @Value("${rabbitmq.notification.exchange}") String exchange) {
         this.userRepository = userRepository;
         this.notificationRabbitMQService = notificationRabbitMQService;
+        this.verificationTokenRepository = verificationTokenRepository;
         this.exchange = exchange;
     }
 
@@ -45,7 +49,10 @@ public class UsersWithoutIntegration {
 
         usersDtoList.forEach(user -> {
             try {
-                notificationRabbitMQService.notify(user, exchange);
+                VerificationToken verificationToken = verificationTokenRepository.findByUserId(user.getId());
+                if (verificationToken != null) {
+                    notificationRabbitMQService.notify(verificationToken, exchange);
+                }
                 userRepository.updateIntegratedById(user.getId(), true);
             } catch (RuntimeException e) {
                 userRepository.updateIntegratedById(user.getId(), false);
