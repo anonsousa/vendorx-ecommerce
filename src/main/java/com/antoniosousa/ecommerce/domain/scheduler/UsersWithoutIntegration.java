@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -43,13 +44,34 @@ public class UsersWithoutIntegration {
     public void searchUsersWithoutIntegration() {
         logger.info("Searching users without integration and trying to integrate'em");
 
+        /*
+         * First I just search users with Integrated: False
+         */
         List<UserRegisterResponseDto> usersDtoList = userRepository.findByIntegratedFalse().stream()
                 .map(UserMapper.INSTANCE::toUserRegisterResponseDto)
                 .collect(Collectors.toList());
 
+        /*
+         * Search all users without integrated on verificationToken repo.
+         */
+        List<VerificationToken> verificationTokens = verificationTokenRepository.findAllByUserIds(
+                usersDtoList.stream()
+                        .map(UserRegisterResponseDto::getId)
+                        .collect(Collectors.toList())
+        );
+
+        /*
+         * I map all users on Map List to easy access, without need to go on
+         * database on each user, reducing integration to database
+         * less memory to consume
+         */
+        Map<Long, VerificationToken> tokenMap = verificationTokens.stream()
+                .collect(Collectors.toMap(token -> token.getUser().getId(),
+                                          token -> token));
+
         usersDtoList.forEach(user -> {
             try {
-                VerificationToken verificationToken = verificationTokenRepository.findByUserId(user.getId());
+                VerificationToken verificationToken = tokenMap.get(user.getId());
                 if (verificationToken != null) {
                     notificationRabbitMQService.notify(verificationToken, exchange);
                 }
