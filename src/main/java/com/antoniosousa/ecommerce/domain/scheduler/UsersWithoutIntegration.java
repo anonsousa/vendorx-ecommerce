@@ -63,7 +63,7 @@ public class UsersWithoutIntegration {
         /*
          * I map all users on Map List to easy access, without need to go on
          * database on each user, reducing integration to database
-         * less memory to consume
+         * less memory to consume.
          */
         Map<Long, VerificationToken> tokenMap = verificationTokens.stream()
                 .collect(Collectors.toMap(token -> token.getUser().getId(),
