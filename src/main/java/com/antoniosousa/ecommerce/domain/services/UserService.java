@@ -7,6 +7,7 @@ import com.antoniosousa.ecommerce.domain.entities.enums.AccountStatus;
 import com.antoniosousa.ecommerce.domain.mapper.UserMapper;
 import com.antoniosousa.ecommerce.domain.repositories.UserRepository;
 import com.antoniosousa.ecommerce.infra.exceptions.ItemNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +17,15 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final NotificationRabbitMQService notificationRabbitMQService;
+    private final String exchange;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
+    public UserService(UserRepository userRepository,
+                       NotificationRabbitMQService notificationRabbitMQService,
+                       @Value("${rabbitmq.notification.exchange}") String exchange) {
         this.userRepository = userRepository;
+        this.notificationRabbitMQService = notificationRabbitMQService;
+        this.exchange = exchange;
     }
 
     @Transactional
@@ -28,7 +35,10 @@ public class UserService {
 
         var userSaved = userRepository.save(userEntity);
 
-        return UserMapper.INSTANCE.toUserRegisterResponseDto(userSaved);
+        UserRegisterResponseDto response = UserMapper.INSTANCE.toUserRegisterResponseDto(userSaved);
+        notifyRabbit(response);
+
+        return response;
     }
 
     @Transactional(readOnly = true)
@@ -51,4 +61,30 @@ public class UserService {
 
         userRepository.delete(user);
     }
+
+
+    private void notifyRabbit(UserRegisterResponseDto user) {
+        try {
+            notificationRabbitMQService.notify(user, exchange);
+            userRepository.updateIntegratedById(user.getId(), true);
+        } catch (RuntimeException e) {
+            userRepository.updateIntegratedById(user.getId(), false);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
+

@@ -91,7 +91,7 @@ public class RabbitMQConfig {
     @Bean
     public Binding createNotificationBinding() {
         return BindingBuilder.bind(
-                        createNotificationExchange())
+                        createQueueNofitication())
                 .to(createNotificationExchange());
     }
 }
