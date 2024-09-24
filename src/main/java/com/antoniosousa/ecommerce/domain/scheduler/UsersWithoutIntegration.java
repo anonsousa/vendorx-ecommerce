@@ -39,7 +39,7 @@ public class UsersWithoutIntegration {
         this.exchange = exchange;
     }
 
-    @Scheduled(fixedDelay = 30, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
     @Transactional
     public void searchUsersWithoutIntegration() {
         logger.info("Searching users without integration and trying to integrate'em");
