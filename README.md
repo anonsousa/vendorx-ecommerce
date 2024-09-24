@@ -11,7 +11,7 @@ Este é um projeto de e-commerce em desenvolvimento. A aplicação permitirá qu
 - **Java 21**
 - **Spring Boot**
 - **PostgreSQL**
-- **RabbitMQ** (Mensageria, em breve)
+- **RabbitMQ** (Mensageria)
 
 ---
 
@@ -21,7 +21,8 @@ Este é um projeto de e-commerce em desenvolvimento. A aplicação permitirá qu
 
 - **Java 21**
 - **Maven**
-- **PostgreSQL**
+- **PostgreSQL(Container)**
+- **RabbitMQ (Container)**
 
 ### Passo a Passo
 
@@ -32,13 +33,20 @@ Este é um projeto de e-commerce em desenvolvimento. A aplicação permitirá qu
    
 2. **Configure o banco de dados**:
     ```bash
-   spring.datasource.url=jdbc:postgresql://localhost:5432/seubanco
+    spring.datasource.url=jdbc:postgresql://localhost:5432/seubanco
     spring.datasource.username=usuario
     spring.datasource.password=senha
     spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
     spring.jpa.hibernate.ddl-auto=update
    
-3. **Compile e execute**:
+3. **Configure o RabbitMQ**:
+   ```bash
+   spring.rabbitmq.host=localhost
+   spring.rabbitmq.port=5672
+   spring.rabbitmq.username=guest
+   spring.rabbitmq.password=guest
+   
+4. **Compile e execute**:
     ```bash
     ./mvnw clean install
     ./mvnw spring-boot:run
