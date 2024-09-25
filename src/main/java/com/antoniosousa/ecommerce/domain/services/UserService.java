@@ -19,15 +19,15 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final NotificationRabbitMQService notificationRabbitMQService;
-    private final VerificationTokenService verificationTokenService;
+    private final ValidationTokenService validationTokenService;
     private final String exchange;
 
     public UserService(UserRepository userRepository,
-                       NotificationRabbitMQService notificationRabbitMQService, VerificationTokenService verificationTokenService,
+                       NotificationRabbitMQService notificationRabbitMQService, ValidationTokenService validationTokenService,
                        @Value("${rabbitmq.notification.exchange}") String exchange) {
         this.userRepository = userRepository;
         this.notificationRabbitMQService = notificationRabbitMQService;
-        this.verificationTokenService = verificationTokenService;
+        this.validationTokenService = validationTokenService;
         this.exchange = exchange;
     }
 
@@ -37,7 +37,7 @@ public class UserService {
         userEntity.setAccountStatus(AccountStatus.PENDING);
         var userSaved = userRepository.save(userEntity);
 
-        VerificationToken verificationToken = verificationTokenService.createVerificationToken(userSaved);
+        VerificationToken verificationToken = validationTokenService.createVerificationToken(userSaved);
 
         notifyRabbit(verificationToken);
 

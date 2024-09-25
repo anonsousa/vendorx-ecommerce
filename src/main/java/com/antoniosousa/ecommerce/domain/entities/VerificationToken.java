@@ -34,6 +34,8 @@ public class VerificationToken {
     @Column(nullable = false)
     private LocalDateTime expiryDate;
 
+    private boolean consumed = Boolean.FALSE;
+
     public VerificationToken(User user,
                              String name,
                              String email,
