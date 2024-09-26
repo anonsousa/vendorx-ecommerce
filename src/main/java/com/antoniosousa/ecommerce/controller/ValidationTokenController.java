@@ -2,11 +2,9 @@ package com.antoniosousa.ecommerce.controller;
 
 import com.antoniosousa.ecommerce.domain.dtos.token.ValidationToken;
 import com.antoniosousa.ecommerce.domain.services.ValidationTokenService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user/validation/token")
@@ -29,5 +27,11 @@ public class ValidationTokenController {
             return ResponseEntity.ok(true);
         }
         return ResponseEntity.badRequest().body(false);
+    }
+
+    @GetMapping
+    public ResponseEntity<Void> generateNewToken(@RequestParam("oldToken") String oldToken) {
+        validationTokenService.generateNewToken(oldToken);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

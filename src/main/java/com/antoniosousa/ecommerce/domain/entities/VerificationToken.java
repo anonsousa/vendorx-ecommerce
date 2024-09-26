@@ -24,7 +24,7 @@ public class VerificationToken {
     private String name;
 
     @Column(nullable = false)
-    private String email; // Armazena o e-mail do usuário
+    private String email;
 
     @OneToOne
     @JoinColumn(name = "user_id")
