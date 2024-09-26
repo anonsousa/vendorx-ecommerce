@@ -85,7 +85,7 @@ public class ValidationTokenService {
          */
         oldTokenEntity.ifPresentOrElse(verificationToken -> {
             long daysBetween = Duration.between(LocalDateTime.now(), verificationToken.getExpiryDate()).toDays();
-            if(daysBetween > 0) {
+            if(daysBetween > 2) {
                 verificationToken.setToken(UUID.randomUUID().toString());
                 verificationToken.setExpiryDate(LocalDateTime.now().plusDays(2));
                 verificationTokenRepository.save(verificationToken);
