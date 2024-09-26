@@ -62,15 +62,18 @@ public class ValidationTokenService {
             try {
                 boolean allValidationsPassed = validateTokenList.stream()
                         .allMatch(impl -> impl.validate(validationToken, token.get()));
+
                 if(allValidationsPassed){
                     userRepository.updateAccountStatus(token.get().getEmail(), AccountStatus.ACTIVE);
                     return true;
+
                 }
             } catch (StrategyException e) {
-                log.error("Validation token failed", e);
+
+                throw new StrategyException(e.getMessage());
             }
         }
-        throw new StrategyException("Validation token failed");
+        throw new ItemNotFoundException("Token not found");
     }
 
     @Transactional
