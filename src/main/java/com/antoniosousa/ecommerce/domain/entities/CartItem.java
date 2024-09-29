@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -29,7 +30,7 @@ public class CartItem implements Serializable {
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String productName;
 
     @Column(nullable = false)

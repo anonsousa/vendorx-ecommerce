@@ -1,6 +1,9 @@
 package com.antoniosousa.ecommerce.domain.entities;
 
 import com.antoniosousa.ecommerce.domain.enums.AccountStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -16,6 +19,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -31,12 +35,15 @@ public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToString.Include
     private Long id;
 
     @Column(length = 80, nullable = false, unique = false)
+    @ToString.Include
     private String username;
 
     @Column(length = 120, nullable = false, unique = false)
+    @ToString.Include
     private String email;
 
     @Column(length = 200, nullable = false)
@@ -66,6 +73,7 @@ public class User implements Serializable {
     @OneToOne(mappedBy = "user",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Cart cart;
 
 }

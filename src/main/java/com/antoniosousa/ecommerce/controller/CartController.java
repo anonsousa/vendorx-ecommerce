@@ -21,7 +21,19 @@ public class CartController {
     @PostMapping
     public ResponseEntity<CartResponseDto> addItem(@RequestParam("userId") Long userId,
                                                    @RequestBody @Valid CartItemRequestDto cartItemRequestDto) {
-
         return ResponseEntity.status(HttpStatus.OK).body(cartService.addItemtoCart(userId, cartItemRequestDto));
     }
+
+    @GetMapping
+    public ResponseEntity<CartResponseDto> getCart(@RequestParam("userId") Long userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.findCartByUserId(userId));
+    }
+
+    @DeleteMapping("/item")
+    public ResponseEntity<Void> removeCartItem(@RequestParam("cartId") Long cartId,
+                                               @RequestParam("cartItemId") Long cartItemId) {
+        cartService.removeItemFromCart(cartId, cartItemId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 }

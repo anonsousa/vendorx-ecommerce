@@ -14,6 +14,8 @@ import com.antoniosousa.ecommerce.infra.exceptions.ItemNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class CartService {
 
@@ -53,21 +55,22 @@ public class CartService {
         return CartMapper.INSTANCE.cartoToDto(cartSaved);
     }
 
+    @Transactional(readOnly = true)
+    public CartResponseDto findCartByUserId(Long userId) {
 
+        return cartRepository.findByUser_Id(userId)
+                .map(CartMapper.INSTANCE::cartoToDto)
+                .orElseThrow(() -> new ItemNotFoundException("Cart not found!"));
+    }
 
+    @Transactional
+    public void removeItemFromCart(Long cartId, Long cartItemId) {
+        Optional<Cart> cart = cartRepository.findCartByIdAndCartItemId(cartId, cartItemId);
 
-
-
-
-
-
-
-
-
-
-
-
-
+        cart.ifPresentOrElse(c -> cartRepository.deleteCartItemByCartIdAndItemId(c.getId(), cartItemId),
+                () -> {throw new ItemNotFoundException("Item not found!");}
+        );
+    }
 
 
 
