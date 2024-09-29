@@ -1,6 +1,6 @@
 package com.antoniosousa.ecommerce.domain.dtos.user;
 
-import com.antoniosousa.ecommerce.domain.entities.enums.AccountStatus;
+import com.antoniosousa.ecommerce.domain.enums.AccountStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

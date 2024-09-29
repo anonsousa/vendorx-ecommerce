@@ -1,14 +1,17 @@
 package com.antoniosousa.ecommerce.domain.entities;
 
-import com.antoniosousa.ecommerce.domain.entities.enums.AccountStatus;
+import com.antoniosousa.ecommerce.domain.enums.AccountStatus;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -59,5 +62,10 @@ public class User implements Serializable {
     private LocalDateTime lastLogin;
 
     private boolean integrated;
+
+    @OneToOne(mappedBy = "user",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private Cart cart;
 
 }

@@ -1,4 +1,4 @@
-package com.antoniosousa.ecommerce.domain.entities.enums;
+package com.antoniosousa.ecommerce.domain.enums;
 
 public enum AccountStatus {
     ACTIVE,

@@ -1,7 +1,7 @@
 package com.antoniosousa.ecommerce.domain.repositories;
 
 import com.antoniosousa.ecommerce.domain.entities.User;
-import com.antoniosousa.ecommerce.domain.entities.enums.AccountStatus;
+import com.antoniosousa.ecommerce.domain.enums.AccountStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

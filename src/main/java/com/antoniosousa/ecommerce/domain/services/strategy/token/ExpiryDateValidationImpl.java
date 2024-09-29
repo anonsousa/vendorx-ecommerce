@@ -1,4 +1,4 @@
-package com.antoniosousa.ecommerce.domain.services.strategy;
+package com.antoniosousa.ecommerce.domain.services.strategy.token;
 
 import com.antoniosousa.ecommerce.domain.dtos.token.ValidationToken;
 import com.antoniosousa.ecommerce.domain.entities.VerificationToken;

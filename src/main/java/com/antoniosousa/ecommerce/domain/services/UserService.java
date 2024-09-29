@@ -4,7 +4,7 @@ import com.antoniosousa.ecommerce.domain.dtos.user.UserRegisterRequestDto;
 import com.antoniosousa.ecommerce.domain.dtos.user.UserRegisterResponseDto;
 import com.antoniosousa.ecommerce.domain.entities.User;
 import com.antoniosousa.ecommerce.domain.entities.VerificationToken;
-import com.antoniosousa.ecommerce.domain.entities.enums.AccountStatus;
+import com.antoniosousa.ecommerce.domain.enums.AccountStatus;
 import com.antoniosousa.ecommerce.domain.mapper.UserMapper;
 import com.antoniosousa.ecommerce.domain.repositories.UserRepository;
 import com.antoniosousa.ecommerce.infra.exceptions.ItemNotFoundException;
